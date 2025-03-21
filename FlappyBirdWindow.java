@@ -7,6 +7,7 @@ public class FlappyBirdWindow extends JFrame {
     private int birdY = 100;
     private int pipeX = 340;
     private int pipeHeight;
+    private int score = 0;
     Random random = new Random();
 
     private Timer timer;
@@ -34,10 +35,13 @@ public class FlappyBirdWindow extends JFrame {
                 g.drawImage(toppipe.getImage(), pipeX, pipeHeight - 350, 100, 350, this);
                 ImageIcon botpipe = new ImageIcon("image/bottompipe.png");
                 g.drawImage(botpipe.getImage(), pipeX, pipeHeight + 250, 100, 350, this);
+                g.setColor(Color.RED);
+                g.setFont(new Font("Arial", Font.BOLD, 36));
                 if (checkEnd()) {
-                    g.setColor(Color.RED);
-                    g.setFont(new Font("Arial", Font.BOLD, 36));
                     g.drawString("Gà Vc", 125, 320);
+                }
+                if (true) {
+                    g.drawString(String.valueOf(score), 25, 40);
                 }
             }
         };
@@ -46,15 +50,30 @@ public class FlappyBirdWindow extends JFrame {
         timer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                birdY += 4;
+                birdY += 5;
                 pipeX -= 2;
 
                 if (pipeX <= -100) {
                     pipeX = 360;
                     pipeHeight = random.nextInt(200) + 100;
+                    score++;
                 }
-                if (checkEnd())
+
+                if (checkEnd()) {
+                    JButton btnNewGame = new JButton("Replay");
+                    btnNewGame.setFont(new Font("Arial", Font.BOLD, 18));
+                    btnNewGame.setBorder(BorderFactory.createEmptyBorder(10, 50, 0, 50));
+                    btnNewGame.addActionListener(ev -> newGame());
+
+                    // Thêm nút vào giữa màn hình
+                    JPanel panel = new JPanel();
+                    panel.add(btnNewGame);
+                    add(panel, BorderLayout.CENTER);
+
+                    revalidate();
                     timer.stop();
+
+                }
                 repaint();
             }
         });
@@ -64,7 +83,7 @@ public class FlappyBirdWindow extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    birdY -= 50;
+                    birdY -= 100;
                 }
             }
         });
@@ -80,6 +99,11 @@ public class FlappyBirdWindow extends JFrame {
                 || (pipeX <= 84 && pipeX >= -16 && birdY >= pipeHeight + 220))
             return true;
         return false;
+    }
+
+    public void newGame() {
+        new GameMenu();
+        dispose();
     }
 
     public static void main(String[] args) {
